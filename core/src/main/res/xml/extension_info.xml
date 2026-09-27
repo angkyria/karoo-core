@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExtensionInfo
+    displayName="@string/extension_name"
+    icon="@drawable/ic_coreheat"
+    id="coreheat"
+    scansDevices="false"
+    fitFile="true">
+    <DataType displayName="@string/df_core_temp" graphical="true" icon="@drawable/ic_temp_picker" typeId="coreTemp" description="@string/df_core_temp_desc"/>
+    <DataType displayName="@string/df_skin_temp" graphical="true" icon="@drawable/ic_temp_picker" typeId="skinTemp" description="@string/df_skin_temp_desc"/>
+    <DataType displayName="@string/df_heat_strain" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatStrain" description="@string/df_heat_strain_desc"/>
+    <DataType displayName="@string/df_heat_zone" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatZone" description="@string/df_heat_zone_desc"/>
+    <DataType displayName="@string/df_heat_load" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatLoad" description="@string/df_heat_load_desc"/>
+    <DataType displayName="@string/df_heat_adaptation" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatAdaptation" description="@string/df_heat_adaptation_desc"/>
+</ExtensionInfo>

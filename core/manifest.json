@@ -1,0 +1,16 @@
+{
+  "label": "CORE Heat",
+  "packageName": "io.angkyria.coreheat",
+  "iconUrl": "https://github.com/angkyria/karoo-core/raw/main/docs/icon.png",
+  "latestApkUrl": "https://github.com/angkyria/karoo-core/releases/latest/download/core-release.apk",
+  "latestVersion": "0.1.0",
+  "latestVersionCode": 1,
+  "developer": "angkyria",
+  "description": "Heat training data fields for the CORE body temperature sensor: core and skin temperature, Heat Strain Index, heat zone, training load and adaptation.",
+  "releaseNotes": "First release. Six heat fields for the CORE sensor, the Heat Strain Index read straight from the sensor over Bluetooth, and heat data added to every ride's FIT file.",
+  "tags": [
+    "datafield",
+    "heat",
+    "core"
+  ]
+}

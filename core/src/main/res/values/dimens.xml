@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+      Breathing room around a field's content: the number and the header. Read by FieldRenderer
+      with getDimensionPixelSize, which rounds the way the layout inflater does, so a layout that
+      later insets by the same amount cannot land a pixel away from it.
+    -->
+    <dimen name="field_edge_padding">5dp</dimen>
+
+</resources>
