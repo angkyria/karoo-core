@@ -6,6 +6,8 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Each entry here should match the `releaseNotes` field in `core/manifest.json`, which is what the
 Karoo shows in its own update flow.
 
+## [Unreleased]
+
 ## [0.2.0] - 2026-09-27
 
 ### Added
