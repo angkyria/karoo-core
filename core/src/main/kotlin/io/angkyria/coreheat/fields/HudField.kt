@@ -71,6 +71,19 @@ private const val PILL_TEXT_TEMPLATE = "00.0"
 private val LOAD_STEPS = doubleArrayOf(HeatAdaptation.MIN_LOAD, 4.0, 6.0, 8.0)
 
 /**
+ * The load pill's colour for each step it is past, light to deep. CORE gives the load no colour,
+ * so these are the pill's own: a violet ramp, a hue neither the heat zones (green to red) nor the
+ * adaptation levels (blue) use, so a load pill cannot be read as either. The load's own field
+ * stays uncoloured.
+ */
+internal val LOAD_COLORS = intArrayOf(
+    0xFFB794F6.toInt(), // past 2: the day counts toward adaptation
+    0xFF9F7AEA.toInt(), // past 4
+    0xFF805AD5.toInt(), // past 6
+    0xFF6B46C1.toInt(), // past 8
+)
+
+/**
  * What a HUD shows in its pill. One picker entry per metric, so each data page can carry the one
  * it wants.
  */
@@ -81,10 +94,7 @@ enum class HudMetric(
     /** CORE's four heat zones as squares, and the Heat Strain Index they are cut from. */
     ZONE({ it.hsi }, FieldCatalog.HSI_PREVIEW),
 
-    /**
-     * Today's heat training load, a square for each of [LOAD_STEPS] it is past. Uncoloured, like
-     * the load's own field: CORE gives the load no colour.
-     */
+    /** Today's heat training load, a square for each of [LOAD_STEPS] it is past, in [LOAD_COLORS]. */
     LOAD({ it.load }, FieldCatalog.LOAD_PREVIEW),
 
     /** CORE's four adaptation levels as squares, and the score. */
@@ -120,7 +130,8 @@ enum class HudMetric(
         // Heat colours off means no colour anywhere; the lit squares still carry the count.
         val color = if (mode == ZoneColorMode.OFF) null else when (this) {
             ZONE -> HeatStrain.color(value)
-            LOAD -> null
+            // Nothing lit, no colour: a load that does not count yet has no step to show.
+            LOAD -> LOAD_COLORS.getOrNull(lit - 1)
             ADAPTATION -> HeatAdaptation.color(value)
         }
         val text = when (this) {

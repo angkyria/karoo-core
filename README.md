@@ -52,8 +52,9 @@ row sets CORE and SKIN centred over their numbers, and between them a pill with 
 icon and the metric the HUD is named for. The zone and adaptation pills light one square per zone
 or level, up to the current one, beside the value: the Heat Strain Index for the zone, the score
 for adaptation. The training load pill lights a square past each of 2, 4, 6 and 8, so its first
-square comes on when the day starts counting toward adaptation; CORE gives the load no colors, so
-its squares stay the color of the text, as on its own field.
+square comes on when the day starts counting toward adaptation. CORE gives the load no colors, so
+its squares take a violet of their own, deeper with each step; the load's own field stays
+uncolored.
 
 On a half-width tile there is no room for the labels beside the pill, so the pill takes the top
 row alone; CORE is still on the left and SKIN on the right.

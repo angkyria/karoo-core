@@ -37,8 +37,24 @@ class HudPillTest {
         assertEquals("100", HudMetric.ADAPTATION.pillFrame(100.0, text).text)
     }
 
-    @Test fun `load pill counts in four squares like the others, uncoloured like its field`() {
-        assertEquals(PillFrame(lit = 3, segments = 4, color = null, text = "6.1"), HudMetric.LOAD.pillFrame(6.1, ZoneColorMode.FILL))
+    @Test fun `load pill counts in four squares like the others, in the colour of its step`() {
+        assertEquals(PillFrame(lit = 3, segments = 4, color = LOAD_COLORS[2], text = "6.1"), HudMetric.LOAD.pillFrame(6.1, text))
+    }
+
+    @Test fun `each load step has its own colour, and a load that does not count yet has none`() {
+        assertNull(HudMetric.LOAD.pillFrame(2.0, text).color)
+        val colours = listOf(3.0, 5.0, 7.0, 9.0).map { HudMetric.LOAD.pillFrame(it, text).color }
+        assertEquals(LOAD_COLORS.toList(), colours)
+    }
+
+    @Test fun `a load colour is never one a heat zone or an adaptation level uses`() {
+        val taken = (1..HeatStrain.ZONES).mapNotNull { HeatStrain.colorOfZone(it) } +
+            HeatAdaptation.Level.entries.mapNotNull { HeatAdaptation.color(it.floor) }
+        assertEquals(emptyList<Int>(), LOAD_COLORS.filter { it in taken })
+    }
+
+    @Test fun `heat colours off takes the load colour away too`() {
+        assertNull(HudMetric.LOAD.pillFrame(6.1, ZoneColorMode.OFF).color)
     }
 
     @Test fun `load pill lights a square past 2, 4, 6 and 8`() {
