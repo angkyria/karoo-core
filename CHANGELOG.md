@@ -6,7 +6,7 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Each entry here should match the `releaseNotes` field in `core/manifest.json`, which is what the
 Karoo shows in its own update flow.
 
-## [Unreleased]
+## [0.2.0] - 2026-09-27
 
 ### Added
 
@@ -36,5 +36,6 @@ Karoo shows in its own update flow.
 - A coloured app and extension icon, so CORE Heat shows up on the Karoo 2's white Extensions list.
 - Settings for heat colors (off, number, field background) and raised decimals.
 
-[Unreleased]: https://github.com/angkyria/karoo-core/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/angkyria/karoo-core/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/angkyria/karoo-core/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/angkyria/karoo-core/releases/tag/v0.1.0
