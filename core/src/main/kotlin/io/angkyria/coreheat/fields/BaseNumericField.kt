@@ -132,6 +132,11 @@ abstract class BaseNumericField(
         config: ViewConfig,
         visual: Visual,
         appearance: Appearance,
+        /**
+         * True when this draws one half of the HUD: no rounded card of its own, and no header --
+         * the HUD sets both labels in its own row. See FieldRenderer.render.
+         */
+        inSlot: Boolean = false,
     ) {
         val raised = appearance.raisedTail
         val (primary, secondary) = RaisedTail.split(visual.text, raised)
@@ -140,6 +145,8 @@ abstract class BaseNumericField(
             context, views, config, label, iconRes,
             tPrimary, tSecondary, primary, secondary, visual.color,
             visual.background,
+            roundCorners = !inSlot,
+            drawHeader = !inSlot,
         )
     }
 
@@ -161,6 +168,20 @@ abstract class BaseNumericField(
         }
         else -> null
     }
+
+    /**
+     * What this field draws with no value at all, by the same path [compute] takes for absent
+     * data. The HUD draws a half before that half's stream has produced anything, and it has to
+     * draw what the field itself would.
+     */
+    internal fun missingFrame(context: Context): Visual = compute(
+        StreamState.Idle,
+        profile = null,
+        preview = false,
+        testMode = false,
+        mode = ZoneColorMode.OFF,
+        defaultColor = Theme.textColor(context),
+    )
 
     internal fun compute(
         state: StreamState,

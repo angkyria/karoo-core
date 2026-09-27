@@ -20,6 +20,9 @@ All fields appear in the field picker under **CORE Heat**.
 | **Heat - Zone** | CORE heat zone, 1–4 |
 | **Heat - Training Load** | Today's heat training load, 0–10 |
 | **Heat - Adaptation** | Heat Adaptation Score, 0–100 % |
+| **Heat - HUD Zone** | Core and skin side by side, the heat zone and index in a pill between them |
+| **Heat - HUD Training Load** | Core and skin side by side, today's heat training load between them |
+| **Heat - HUD Adaptation** | Core and skin side by side, the adaptation level and score between them |
 
 Every field needs a CORE sensor paired to the Karoo. The Karoo passes on its core and skin
 temperature; everything else is worked out by CORE Heat, following CORE's own definitions:
@@ -40,6 +43,20 @@ CORE does not publish the formulas for the load and the score, so those are mode
 tables and worked examples on its help centre; they land within a few tenths of CORE's own numbers
 there. The score starts at 0 when CORE Heat is installed and only sees rides recorded on this
 Karoo, so it will differ from the CORE app's if you also heat train elsewhere.
+
+### HUD
+
+The three **HUD** fields are one tile each: core and skin temperature side by side, each centred
+in its half and colored by the heat zone like its own field, with a hairline between them. The top
+row sets CORE and SKIN centred over their numbers, and between them a pill with the tile's one
+icon and the metric the HUD is named for. The zone and adaptation pills light one square per zone
+or level, up to the current one, beside the value: the Heat Strain Index for the zone, the score
+for adaptation. The training load pill lights a square past each of 2, 4, 6 and 8, so its first
+square comes on when the day starts counting toward adaptation; CORE gives the load no colors, so
+its squares stay the color of the text, as on its own field.
+
+On a half-width tile there is no room for the labels beside the pill, so the pill takes the top
+row alone; CORE is still on the left and SKIN on the right.
 
 ## Reading the index from the sensor
 
@@ -151,6 +168,9 @@ the extension's settings and are offered no update, while the APK looks perfectl
 ## Licenses
 
 Apache-2.0 — see [LICENSE](LICENSE).
+
+The HUD follows the HUD of [karoo-bignum](https://github.com/smartycoder/karoo-bignum), also
+Apache-2.0: its layout of two whole fields and a zone pill, and the pill's drawing.
 
 Every number and label is set in **DIN 1451 Mittelschrift**, the German road-sign typeface, as
 [u_DIN 1451 Mittelschrift](https://fontlibrary.org/en/font/u-din-1451-mittelschrift): usr_share's

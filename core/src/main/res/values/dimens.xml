@@ -11,4 +11,18 @@
     <!-- Space between a field's label and the top of its number. See FieldRenderer.headerBottomInset. -->
     <dimen name="label_value_gap">6dp</dimen>
 
+    <!--
+      How far the HUD's pill reaches past the band its labels are centred in, above and below:
+      the pill is that band plus this, so it reads as a lozenge around text of the labels' own
+      size. In px, like the divider: one pixel on every screen.
+    -->
+    <dimen name="hud_pill_inset">1px</dimen>
+
+    <!--
+      The hairline between the HUD's two halves, in px on purpose: a rule is one pixel on every
+      screen rather than something that thickens with density. HudField subtracts it before it
+      splits the tile, so the two cannot disagree about how wide a half is.
+    -->
+    <dimen name="hud_divider_width">1px</dimen>
+
 </resources>

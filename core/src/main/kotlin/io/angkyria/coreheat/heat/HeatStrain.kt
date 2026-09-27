@@ -85,6 +85,9 @@ object HeatStrain {
         return table[lo] + (table[lo + 1] - table[lo]) * f
     }
 
+    /** How many Heat Zones CORE defines: [zone] returns 1 to this. */
+    const val ZONES = 4
+
     /**
      * Heat Zone 1-4 for [hsi]: 0-0.9, 1.0-2.9, 3.0-6.9 and 7.0 up.
      *

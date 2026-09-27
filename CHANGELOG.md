@@ -8,6 +8,13 @@ Karoo shows in its own update flow.
 
 ## [Unreleased]
 
+### Added
+
+- Three HUD fields, modelled on karoo-bignum's HUD: core and skin temperature side by side in one
+  tile, centred under their labels, with a pill between the labels for the heat zone and index
+  (Heat - HUD Zone), today's heat training load (Heat - HUD Training Load) or the adaptation
+  level and score (Heat - HUD Adaptation). On a half-width tile the pill takes the top row alone.
+
 ## [0.1.0] - 2026-09-27
 
 ### Added

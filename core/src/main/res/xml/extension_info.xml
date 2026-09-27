@@ -11,4 +11,7 @@
     <DataType displayName="@string/df_heat_zone" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatZone" description="@string/df_heat_zone_desc"/>
     <DataType displayName="@string/df_heat_load" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatLoad" description="@string/df_heat_load_desc"/>
     <DataType displayName="@string/df_heat_adaptation" graphical="true" icon="@drawable/ic_temp_picker" typeId="heatAdaptation" description="@string/df_heat_adaptation_desc"/>
+    <DataType displayName="@string/df_hud_zone" graphical="true" icon="@drawable/ic_temp_picker" typeId="hudZone" description="@string/df_hud_zone_desc"/>
+    <DataType displayName="@string/df_hud_load" graphical="true" icon="@drawable/ic_temp_picker" typeId="hudLoad" description="@string/df_hud_load_desc"/>
+    <DataType displayName="@string/df_hud_adaptation" graphical="true" icon="@drawable/ic_temp_picker" typeId="hudAdaptation" description="@string/df_hud_adaptation_desc"/>
 </ExtensionInfo>

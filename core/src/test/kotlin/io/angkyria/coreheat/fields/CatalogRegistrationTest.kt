@@ -23,12 +23,13 @@ class CatalogRegistrationTest {
     private val fields = File(src, "kotlin/io/angkyria/coreheat/fields")
 
     /**
-     * The catalogue's ids, in picker order. Every entry carries the id at the call site today;
-     * a single-purpose class that passes it to BaseNumericField itself is looked up in the
+     * The catalogue's ids, in picker order. Every entry carries the id at the call site today,
+     * followed by whatever it is built from -- karoo for most, the two temperature fields for a
+     * HUD; a single-purpose class that passes it to BaseNumericField itself is looked up in the
      * class named on the line.
      */
     private val catalogIds: List<String> =
-        Regex("""^\s+(\w+)\(extension, (?:"(\w+)", )?karoo""", RegexOption.MULTILINE)
+        Regex("""^\s+(\w+)\(extension, (?:"(\w+)", )?\w+""", RegexOption.MULTILINE)
             .findAll(File(fields, "FieldCatalog.kt").readText())
             .map { m ->
                 m.groupValues[2].ifEmpty {
@@ -55,7 +56,7 @@ class CatalogRegistrationTest {
         val constructions = Regex("""^\s+\w+\(extension,""", RegexOption.MULTILINE)
             .findAll(File(fields, "FieldCatalog.kt").readText()).count()
         assertEquals("constructions the id regex did not match", constructions, catalogIds.size)
-        assertEquals("declared ids", 6, declaredIds.size)
+        assertEquals("declared ids", 9, declaredIds.size)
     }
 
     @Test fun `the picker declares every catalogue field and nothing else`() {

@@ -133,6 +133,7 @@ object FieldRenderer {
         val iconRes: Int,
         val labelColor: Int,
         val iconColor: Int,
+        val withIcon: Boolean,
     )
 
     private val headerCache = ConcurrentHashMap<HeaderKey, Bitmap>()
@@ -218,7 +219,7 @@ object FieldRenderer {
         return Metrics(size, ceil(width).toInt(), digits.height(), digits.top, width)
     }
 
-    private fun typefaceFor(context: Context): Typeface =
+    internal fun typefaceFor(context: Context): Typeface =
         loadedTypeface ?: (runCatching { context.resources.getFont(R.font.din_1451_mittelschrift) }
             .getOrDefault(Typeface.DEFAULT_BOLD))
             .also { loadedTypeface = it }
@@ -276,15 +277,33 @@ object FieldRenderer {
         primaryColor: Int,
         /** Fill for the whole field, or null to leave Karoo's own background showing. */
         backgroundColor: Int? = null,
+        /**
+         * False when this call draws one half of the HUD rather than a whole Karoo card. Each half
+         * is a full numeric_field.xml inside the one card, so rounding it too would draw nested
+         * rounded corners, and cut two notches into each end of the divider between the halves.
+         */
+        roundCorners: Boolean = true,
+        /**
+         * False to leave the header out and keep only its row, which the number still starts
+         * below. The HUD draws its halves this way: it sets the two labels and its pill in one row
+         * of its own, centred on the tile rather than on each half.
+         */
+        drawHeader: Boolean = true,
     ) {
         // The header comes first because the number's box is what it leaves behind. It is cached
         // and depends on nothing the number does, so this is a reorder rather than extra work.
         val onBackground = backgroundColor?.let { ZoneColors.onColor(it) }
-        val header = header(
-            context, label, iconRes,
-            labelColor = onBackground ?: Theme.textColor(context),
-            iconColor = onBackground ?: ICON_COLOR,
-        )
+        val header = if (drawHeader) {
+            header(
+                context, label, iconRes,
+                labelColor = onBackground ?: Theme.textColor(context),
+                iconColor = onBackground ?: ICON_COLOR,
+            )
+        } else {
+            null
+        }
+        // The row is reserved either way, so a number sits at the same height with or without it.
+        val headerHeight = header?.height ?: headerHeight(context)
         val pad = edgePadding(context)
 
         // What the number actually gets on screen, from the view Karoo reports. The layout puts
@@ -294,7 +313,7 @@ object FieldRenderer {
         // The header always takes its own height off the top, and the number always gets that
         // back as VIEW padding below. That pairing is what makes the clearance survive a
         // [ViewConfig.viewSize] that does not match the view -- see [render]'s note on it.
-        val fullBox = viewHeight - valueBottomPad(context) - header.height
+        val fullBox = viewHeight - valueBottomPad(context) - headerHeight
 
         val numberPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             applyFont(context)
@@ -332,13 +351,13 @@ object FieldRenderer {
         // from it is decided for a tile that does not exist. View padding is applied by the
         // framework in the view's OWN space, so a wrong viewSize can shrink the number but can
         // never push it under the header.
-        val headerPad = header.height
+        val headerPad = headerHeight
         // TEMPORARY DIAGNOSTIC -- remove once the fix is confirmed on the device. This is the
         // only instrument that shows the reported size next to what is drawn from it.
         if (BuildConfig.DEBUG) {
             Log.i(
                 "CoreHeatDiag",
-                "label=$label view=${viewWidth}x$viewHeight pad=$pad hdr=${header.height} " +
+                "label=$label view=${viewWidth}x$viewHeight pad=$pad hdr=$headerHeight " +
                     "fullBox=$fullBox ink=${metrics.height} headerPad=$headerPad " +
                     "align=${config.alignment}",
             )
@@ -418,11 +437,12 @@ object FieldRenderer {
         views.setImageViewBitmap(target, bitmap)
 
         // The header is aligned by the layout, so pick the copy sitting at the same edge as the
-        // number.
-        val headerTarget = when (config.alignment) {
-            Alignment.LEFT -> R.id.header_start
-            Alignment.CENTER -> R.id.header_center
-            Alignment.RIGHT -> R.id.header_end
+        // number -- or none of them, when the caller draws its own.
+        val headerTarget = when {
+            header == null -> null
+            config.alignment == Alignment.LEFT -> R.id.header_start
+            config.alignment == Alignment.CENTER -> R.id.header_center
+            else -> R.id.header_end
         }
         for (id in HEADER_IDS) {
             views.setViewVisibility(id, if (id == headerTarget) View.VISIBLE else View.GONE)
@@ -442,31 +462,40 @@ object FieldRenderer {
         }
         // A fresh RemoteViews per update means this has to repeat even though the bitmap is
         // cached -- only the drawing is saved, not the transfer.
-        views.setImageViewBitmap(headerTarget, header)
+        if (headerTarget != null && header != null) views.setImageViewBitmap(headerTarget, header)
 
         views.setInt(R.id.root, "setBackgroundColor", backgroundColor ?: Color.TRANSPARENT)
         // Karoo does NOT clip this view to its rounded card -- measured on a Karoo 3 ride
         // page, where a fill came out with square corners sitting over the rounded card. So
         // the rounding is ours to do, everywhere and not just in the page editor.
         // setViewOutlinePreferredRadius is API 31; minSdk here is 29, Karoo 3 runs 33, so on
-        // anything older the fill simply stays square.
+        // anything older the fill simply stays square. Not on a HUD half: see roundCorners.
+        if (roundCorners) roundToCard(views, R.id.root)
+    }
+
+    /**
+     * Rounds [id] to the corner Karoo draws its cards with and clips to it; see the note in
+     * [render]. The HUD rounds its whole tile this way, since its halves do not round themselves.
+     */
+    internal fun roundToCard(views: RemoteViews, id: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            views.setViewOutlinePreferredRadius(R.id.root, CARD_RADIUS_DP, TypedValue.COMPLEX_UNIT_DIP)
-            views.setBoolean(R.id.root, "setClipToOutline", true)
+            views.setViewOutlinePreferredRadius(id, CARD_RADIUS_DP, TypedValue.COMPLEX_UNIT_DIP)
+            views.setBoolean(id, "setClipToOutline", true)
         }
     }
 
-    /** Cached [renderHeader]; see [headerCache]. */
-    private fun header(
+    /** Cached [renderHeader]; see [headerCache]. The HUD draws its two labels through it too. */
+    internal fun header(
         context: Context,
         label: String,
         iconRes: Int,
         labelColor: Int,
         iconColor: Int,
+        withIcon: Boolean = true,
     ): Bitmap = headerCache.getOrPut(
-        HeaderKey(label, iconRes, labelColor, iconColor),
+        HeaderKey(label, iconRes, labelColor, iconColor, withIcon),
     ) {
-        renderHeader(context, label, iconRes, labelColor, iconColor)
+        renderHeader(context, label, iconRes, labelColor, iconColor, withIcon)
     }
 
     /**
@@ -491,23 +520,26 @@ object FieldRenderer {
     }
 
     /**
-     * How wide a header bitmap is for [label] -- icon, gap, the label itself and the edge padding
-     * on both sides.
+     * How wide a header bitmap is for [label] -- icon and gap when it has one, the label itself
+     * and the edge padding on both sides.
+     *
+     * Reachable from the HUD, which has to know how much of its width the two labels claim before
+     * it can decide whether its pill fits between them.
      */
-    private fun headerWidth(context: Context, label: String): Int {
+    internal fun headerWidth(context: Context, label: String, withIcon: Boolean = true): Int {
         val density = context.resources.displayMetrics.density
         val labelHeight = LABEL_HEIGHT_DP * density
-        val iconSize = (labelHeight * ICON_SCALE).toInt()
+        val icon = if (withIcon) (labelHeight * ICON_SCALE).toInt() + ICON_GAP_DP * density else 0f
         val pad = 2 * edgePadding(context)
         val labelWidth = labelPaint(context).measureText(label.uppercase())
-        return (iconSize + ICON_GAP_DP * density + labelWidth + pad).toInt()
+        return (icon + labelWidth + pad).toInt()
     }
 
     /**
      * How tall a header bitmap is. The same for every field, because it follows the icon and the
      * fixed label size and neither depends on the label's text.
      */
-    private fun headerHeight(context: Context): Int =
+    internal fun headerHeight(context: Context): Int =
         (labelBand(context) + headerTopInset(context) + headerBottomInset(context)).toInt()
 
     /**
@@ -530,7 +562,7 @@ object FieldRenderer {
      * The band the icon and the label are centred in, before the insets above and below it.
      * Icon-led, since [ICON_SCALE] draws the glyph taller than the capitals beside it.
      */
-    private fun labelBand(context: Context): Float {
+    internal fun labelBand(context: Context): Float {
         val labelHeight = LABEL_HEIGHT_DP * context.resources.displayMetrics.density
         return maxOf((labelHeight * ICON_SCALE).toInt().toFloat(), labelHeight)
     }
@@ -555,11 +587,16 @@ object FieldRenderer {
         iconRes: Int,
         labelColor: Int,
         iconColor: Int,
+        /**
+         * False for the label alone, as the HUD draws CORE and SKIN: its pill carries the one
+         * icon. Width only: the bitmap stays exactly as tall as any other header.
+         */
+        withIcon: Boolean = true,
     ): Bitmap {
         val density = context.resources.displayMetrics.density
         val labelHeight = LABEL_HEIGHT_DP * density
-        val iconSize = (labelHeight * ICON_SCALE).toInt()
-        val iconGap = ICON_GAP_DP * density
+        val iconSize = if (withIcon) (labelHeight * ICON_SCALE).toInt() else 0
+        val iconGap = if (withIcon) ICON_GAP_DP * density else 0f
         val padding = edgePadding(context).toFloat()
 
         val paint = labelPaint(context).apply {
@@ -570,7 +607,7 @@ object FieldRenderer {
         paint.getTextBounds(CAP_REFERENCE, 0, CAP_REFERENCE.length, bounds)
 
         val text = label.uppercase()
-        val w = headerWidth(context, label)
+        val w = headerWidth(context, label, withIcon)
         val h = headerHeight(context)
 
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
@@ -585,7 +622,7 @@ object FieldRenderer {
         val top = headerTopInset(context)
         val band = labelBand(context)
         val iconTop = top + ((band - iconSize) / 2f).toInt()
-        context.getDrawable(iconRes)?.mutate()?.apply {
+        if (withIcon) context.getDrawable(iconRes)?.mutate()?.apply {
             setTint(iconColor)
             setBounds(left.toInt(), iconTop, left.toInt() + iconSize, iconTop + iconSize)
             draw(canvas)

@@ -6,6 +6,7 @@ import io.angkyria.coreheat.heat.HeatAdaptation
 import io.angkyria.coreheat.heat.HeatStrain
 import io.angkyria.coreheat.heat.HeatTracker
 import io.hammerhead.karooext.KarooSystemService
+import io.hammerhead.karooext.extension.DataTypeImpl
 import io.hammerhead.karooext.models.DataType
 
 /**
@@ -21,23 +22,35 @@ object FieldCatalog {
     internal const val CORE_PREVIEW = 38.6
     internal const val SKIN_PREVIEW = 35.1
     internal const val HSI_PREVIEW = 4.1
+    internal const val LOAD_PREVIEW = 6.1
+    internal const val ADAPTATION_PREVIEW = 72.1
 
-    fun build(extension: String, karoo: KarooSystemService, heat: HeatTracker): List<BaseNumericField> {
+    fun build(extension: String, karoo: KarooSystemService, heat: HeatTracker): List<DataTypeImpl> {
         // The core and skin fields each see only their own temperature, so their colour is read
         // from the tracker, which has both. At most a sample behind the number it colours.
         val heatZoneNow: (Double) -> Int? = { _ -> heat.state.value.hsi?.let(HeatStrain::color) }
-        return listOf(
+        val temperatures = listOf(
             // The two temperatures are the Karoo's own streams; they ship a data-quality flag
             // beside the reading, so the field they read is named rather than left to
             // singleValue. Both are coloured by the current Heat Zone, which CORE defines on the
             // two together -- a core temperature alone cannot say it.
             SimpleField(extension, "coreTemp", karoo, DataType.Type.CORE_TEMP, "CORE", R.drawable.ic_temp, Formatters.bodyTemperature, needsProfile = true, valueField = DataType.Field.CORE_TEMP, bands = heatZoneNow, previewValue = CORE_PREVIEW),
             SimpleField(extension, "skinTemp", karoo, DataType.Type.SKIN_TEMP, "SKIN", R.drawable.ic_temp, Formatters.bodyTemperature, needsProfile = true, valueField = DataType.Field.SKIN_TEMP, bands = heatZoneNow, previewValue = SKIN_PREVIEW),
+        )
+        // The HUD's two halves ARE these two fields, not copies, so a half can never draw
+        // differently from the field it stands for.
+        val (core, skin) = temperatures
+        return temperatures + listOf(
             // The four below are worked out here; see HeatTracker.
             HeatField(extension, "heatStrain", karoo, heat, "HSI", Formatters.tenths, read = { it.hsi }, bands = HeatStrain::color, previewValue = HSI_PREVIEW),
             HeatField(extension, "heatZone", karoo, heat, "HEAT Z", Formatters.count, read = { state -> state.hsi?.let { HeatStrain.zone(it).toDouble() } }, bands = { HeatStrain.colorOfZone(it.toInt()) }, previewValue = 3.0),
-            HeatField(extension, "heatLoad", karoo, heat, "HEAT LOAD", Formatters.tenths, read = { it.load }, previewValue = 6.1),
-            HeatField(extension, "heatAdaptation", karoo, heat, "HEAT ADAPT", Formatters.percent, read = { it.adaptation }, bands = HeatAdaptation::color, previewValue = 72.1),
+            HeatField(extension, "heatLoad", karoo, heat, "HEAT LOAD", Formatters.tenths, read = { it.load }, previewValue = LOAD_PREVIEW),
+            HeatField(extension, "heatAdaptation", karoo, heat, "HEAT ADAPT", Formatters.percent, read = { it.adaptation }, bands = HeatAdaptation::color, previewValue = ADAPTATION_PREVIEW),
+            // Core and skin side by side with a heat metric in a pill between their labels; one
+            // entry per metric, so each page can carry the one it wants. See HudField.
+            HudField(extension, "hudZone", core, skin, heat, HudMetric.ZONE),
+            HudField(extension, "hudLoad", core, skin, heat, HudMetric.LOAD),
+            HudField(extension, "hudAdaptation", core, skin, heat, HudMetric.ADAPTATION),
         )
     }
 }

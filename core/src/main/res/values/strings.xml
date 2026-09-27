@@ -43,4 +43,10 @@
     <string name="df_heat_load_desc">Today\'s heat training load, 0 to 10, earned while recording with heart rate.</string>
     <string name="df_heat_adaptation">Heat - Adaptation</string>
     <string name="df_heat_adaptation_desc">Heat adaptation score from your daily heat training loads, colored by level.</string>
+    <string name="df_hud_zone">Heat - HUD Zone</string>
+    <string name="df_hud_zone_desc">Core and skin temperature side by side, with the heat zone between them.</string>
+    <string name="df_hud_load">Heat - HUD Training Load</string>
+    <string name="df_hud_load_desc">Core and skin temperature side by side, with today\'s heat training load between them.</string>
+    <string name="df_hud_adaptation">Heat - HUD Adaptation</string>
+    <string name="df_hud_adaptation_desc">Core and skin temperature side by side, with the heat adaptation score between them.</string>
 </resources>

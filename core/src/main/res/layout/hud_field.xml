@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The HUD tile: the CORE and SKIN numbers side by side, each centred in its own half, with a row
+  across the top that sets CORE and SKIN centred over their numbers and the pill between them.
+  After karoo-bignum's HUD - Two Fields.
+
+  Both slot FrameLayouts stay EMPTY here on purpose: HudField fills them at runtime with
+  RemoteViews.addView, one numeric_field.xml per half, drawn without its own header. Nothing in
+  this file may assume what ends up inside them.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hud_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <FrameLayout android:id="@+id/slot_left"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <!--
+          The hairline between the halves. An ImageView and not a bare View, which is the obvious
+          choice for a rule and does not work: RemoteViews inflates only @RemoteView classes, and
+          android.view.View is not one, so the host would refuse the whole tile.
+
+          A fixed mid grey rather than a theme colour: it holds against both the white and the
+          black card. Outside both slots, so a half filled with its zone colour paints only itself.
+          Edge to edge: it runs up behind the pill, which is opaque, so it seems to start under it.
+        -->
+        <ImageView
+            android:layout_width="@dimen/hud_divider_width"
+            android:layout_height="match_parent"
+            android:background="#808080"
+            android:contentDescription="@null"/>
+
+        <FrameLayout android:id="@+id/slot_right"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <!--
+      The labels' row, split exactly as the slots are, two equal halves either side of a
+      spacer as wide as the divider, so each label centres over its own number. scaleType
+      center draws a label at its own size in the middle of its half; HudField hides both where
+      the pill needs the room.
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView android:id="@+id/hud_label_core"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:contentDescription="@null"/>
+
+        <!-- The divider's width, holding the halves of this row in line with the slots. -->
+        <ImageView
+            android:layout_width="@dimen/hud_divider_width"
+            android:layout_height="0dp"
+            android:contentDescription="@null"/>
+
+        <ImageView android:id="@+id/hud_label_skin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:contentDescription="@null"/>
+
+    </LinearLayout>
+
+    <!--
+      The pill. wrap_content and scaleType="center": the bitmap is drawn at exactly the size it
+      should occupy: as tall as the header row, with the lozenge already placed on the labels'
+      centre line. So any scaling here would second-guess that arithmetic.
+
+      Centred on the tile, it straddles the divider between the two labels. It sits in the row
+      the halves reserve for a header anyway, so it takes no height from either number.
+    -->
+    <ImageView android:id="@+id/hud_pill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:scaleType="center"
+        android:visibility="gone"
+        android:contentDescription="@null"/>
+
+</FrameLayout>

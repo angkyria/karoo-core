@@ -76,6 +76,9 @@ android {
 
     sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
     sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
+    // Debug-only tooling that must never ship: HudPreviewActivity, which draws the HUD at every
+    // tile size so its layout can be checked without a sensor or a ride.
+    sourceSets["debug"].kotlin.srcDirs("src/debug/kotlin")
 
     testOptions {
         unitTests.isReturnDefaultValues = true
