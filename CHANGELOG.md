@@ -15,6 +15,11 @@ Karoo shows in its own update flow.
   (Heat - HUD Zone), today's heat training load (Heat - HUD Training Load) or the adaptation
   level and score (Heat - HUD Adaptation). On a half-width tile the pill takes the top row alone.
 
+### Changed
+
+- A raised decimal keeps a gap before it, in every field, so it no longer runs into the digit
+  before it.
+
 ## [0.1.0] - 2026-09-27
 
 ### Added

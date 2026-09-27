@@ -122,6 +122,18 @@ object FieldRenderer {
     internal const val SECONDARY_SCALE = 0.5f
 
     /**
+     * Space before the secondary, as a share of the primary's text size. It stands in for the
+     * point the raised tail drops: set straight after the primary's advance, the small digit sat
+     * closer to the digit before it than the big digits sit to each other -- 7px against 12 on a
+     * Karoo 2 -- and read as running into it.
+     */
+    internal const val SECONDARY_GAP = 0.08f
+
+    /** Room before [secondary] beside a primary set at [textSize]; none when nothing is raised. */
+    internal fun secondaryGap(secondary: String, textSize: Float): Float =
+        if (secondary.isEmpty()) 0f else textSize * SECONDARY_GAP
+
+    /**
      * The header depends on nothing that changes between samples, but render() runs on every
      * one, so it is drawn once per distinct field and reused. Alignment is not part of the key:
      * the bitmap is content-sized, so the layout does the aligning. Both colours are, because
@@ -374,10 +386,11 @@ object FieldRenderer {
         // are the same two numbers naturalWidth is built from.
         var primaryWidth = numberPaint.measureText(primary)
         var secondaryWidth = secondaryPaint.measureText(secondary)
+        var gap = secondaryGap(secondary, numberPaint.textSize)
 
         // Values wider than the room they have (a Fahrenheit core over 100) shrink to
         // fit. Both parts shrink by the same factor so their size relationship is unchanged.
-        val naturalWidth = primaryWidth + secondaryWidth
+        val naturalWidth = primaryWidth + gap + secondaryWidth
         val factor = shrinkFactor(naturalWidth, metrics.templateWidth, boxWidth)
         if (factor < 1f) {
             numberPaint.textSize = metrics.textSize * factor
@@ -388,13 +401,15 @@ object FieldRenderer {
             digitHeight = shrunk.height()
             primaryWidth = numberPaint.measureText(primary)
             secondaryWidth = secondaryPaint.measureText(secondary)
+            gap = secondaryGap(secondary, numberPaint.textSize)
         }
+        val valueWidth = primaryWidth + gap + secondaryWidth
 
         // Wide enough for whatever the value came out as. Narrower values keep the template's
         // width, which is what holds their on-screen size steady as digits come and go; a value
         // that outgrew the template and was left unshrunk needs the room it actually takes, or
         // the alignment would push its leading digits off the bitmap.
-        val w = maxOf(metrics.width, ceil(primaryWidth + secondaryWidth).toInt())
+        val w = maxOf(metrics.width, ceil(valueWidth).toInt())
 
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -406,7 +421,7 @@ object FieldRenderer {
         }
 
         val baseline = baselineFor(h, digitHeight, digitTop)
-        val left = startX(primaryWidth + secondaryWidth)
+        val left = startX(valueWidth)
         canvas.drawText(primary, left, baseline, numberPaint)
 
         if (secondary.isNotEmpty()) {
@@ -415,7 +430,7 @@ object FieldRenderer {
             val small = Rect()
             secondaryPaint.getTextBounds(REFERENCE_GLYPHS, 0, REFERENCE_GLYPHS.length, small)
             val secondaryBaseline = baseline + digitTop - small.top
-            canvas.drawText(secondary, left + primaryWidth, secondaryBaseline, secondaryPaint)
+            canvas.drawText(secondary, left + primaryWidth + gap, secondaryBaseline, secondaryPaint)
         }
 
         // The bottom is its own number, not pad reused: it is the gap fullBox was computed

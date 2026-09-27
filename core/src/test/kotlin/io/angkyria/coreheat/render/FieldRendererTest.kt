@@ -83,4 +83,26 @@ class FieldRendererTest {
         assertEquals(1f, FieldRenderer.shrinkFactor(0f, 157f, 220), 0.0001f)
     }
 
+    // ── secondaryGap ───────────────────────────────────────────────────────
+    // The room before a raised decimal, which set flush against the primary ran into it.
+
+    @Test
+    fun `a raised decimal gets room before it`() {
+        assertEquals(125f * FieldRenderer.SECONDARY_GAP, FieldRenderer.secondaryGap("6", 125f), 0.0001f)
+    }
+
+    @Test
+    fun `the room grows with the number, so it looks the same on every tile`() {
+        assertEquals(
+            2 * FieldRenderer.secondaryGap("6", 100f),
+            FieldRenderer.secondaryGap("6", 200f),
+            0.0001f,
+        )
+    }
+
+    @Test
+    fun `a value with nothing raised gets no room it would not use`() {
+        assertEquals(0f, FieldRenderer.secondaryGap("", 125f), 0.0001f)
+    }
+
 }
