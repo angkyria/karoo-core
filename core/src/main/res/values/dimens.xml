@@ -8,4 +8,7 @@
     -->
     <dimen name="field_edge_padding">5dp</dimen>
 
+    <!-- Space between a field's label and the top of its number. See FieldRenderer.headerBottomInset. -->
+    <dimen name="label_value_gap">6dp</dimen>
+
 </resources>

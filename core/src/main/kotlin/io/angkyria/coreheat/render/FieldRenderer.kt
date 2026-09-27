@@ -511,12 +511,12 @@ object FieldRenderer {
         (labelBand(context) + headerTopInset(context) + headerBottomInset(context)).toInt()
 
     /**
-     * Clearance between the label and the number below it. Less than the edge padding by
-     * [VALUE_GAIN_PX]: the label's own band already separates the two, and the full padding on
-     * top of it was a gap wider than the label's capitals are tall.
+     * Clearance between the label and the number below it, in dp so it holds on every screen.
+     * A fixed pixel cut here left about 2dp on the Karoo 2's denser screen, and DIN's tall
+     * digits then read as touching the label above them.
      */
     internal fun headerBottomInset(context: Context): Int =
-        (edgePadding(context) - VALUE_GAIN_PX).coerceAtLeast(0)
+        context.resources.getDimensionPixelSize(R.dimen.label_value_gap)
 
     /**
      * Clearance under the number, against [edgePadding] at its sides. Vertical room is what the
