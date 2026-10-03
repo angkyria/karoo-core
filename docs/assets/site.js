@@ -147,17 +147,30 @@
   const fontAt = (size) => `${size}px ${FAMILY}`;
   const measurer = document.createElement('canvas').getContext('2d');
 
-  function advance(text, size) {
-    measurer.font = fontAt(size);
-    return measurer.measureText(text).width;
+  // Every tile is drawn in Karoo pixels, whatever size it is shown at, so the same few strings
+  // come back at the same few sizes on every repaint: each is measured once. Cleared once the
+  // face has loaded, and should it ever pass a size no visit to the page comes near.
+  const measured = new Map();
+  function measure(text, size) {
+    const key = `${size}|${text}`;
+    let m = measured.get(key);
+    if (!m) {
+      if (measured.size > 4000) measured.clear();
+      measurer.font = fontAt(size);
+      const tm = measurer.measureText(text);
+      m = { width: tm.width, ascent: tm.actualBoundingBoxAscent, descent: tm.actualBoundingBoxDescent };
+      measured.set(key, m);
+    }
+    return m;
   }
+
+  const advance = (text, size) => measure(text, size).width;
 
   /** Paint.getTextBounds: ink bounds about the baseline, rounded outwards to whole pixels. */
   function inkBounds(text, size) {
-    measurer.font = fontAt(size);
-    const m = measurer.measureText(text);
-    const top = Math.floor(-m.actualBoundingBoxAscent);
-    const bottom = Math.ceil(m.actualBoundingBoxDescent);
+    const m = measure(text, size);
+    const top = Math.floor(-m.ascent);
+    const bottom = Math.ceil(m.descent);
     return { top, height: bottom - top };
   }
 
@@ -582,11 +595,22 @@
     return STORY;
   }
 
-  function paint(canvas) {
+  // The width and pixel ratio each canvas was last painted at, so a resize repaints only the ones
+  // it changed: opening the table view changes the page's height, and none of its tiles.
+  const paintedAt = new WeakMap();
+  const sizeKey = (cssWidth) => `${cssWidth}@${window.devicePixelRatio || 1}`;
+
+  /**
+   * Draws one tile at [cssWidth], the width it is shown at. Painting several, measure them all
+   * first and pass each its width: a canvas's new size invalidates the page's layout, and reading
+   * the next one's width straight after would force the whole page to be laid out again, once
+   * per tile.
+   */
+  function paint(canvas, cssWidth = canvas.clientWidth) {
     const w = Number(canvas.dataset.w);
     const h = Number(canvas.dataset.h);
-    const cssWidth = canvas.clientWidth;
     if (!cssWidth) return;
+    paintedAt.set(canvas, sizeKey(cssWidth));
     const dpr = window.devicePixelRatio || 1;
     const pxWidth = Math.round(cssWidth * dpr);
     const pxHeight = Math.round(cssWidth * dpr * h / w);
@@ -605,13 +629,17 @@
     else if (tile === 'pill') label = drawPillTile(ctx, w, h, canvas.dataset.metric, Number(canvas.dataset.value), settings);
     else label = drawField(ctx, w, h, canvas.dataset.field, values, settings);
     ctx.restore();
-    canvas.setAttribute('aria-label', label);
+    if (canvas.getAttribute('aria-label') !== label) canvas.setAttribute('aria-label', label);
     // The outline the page draws round a tile, rounded to the card's own corner at this size.
-    if (tile !== 'screen') canvas.style.borderRadius = `${(CARD_RADIUS * cssWidth / w).toFixed(2)}px`;
+    const radius = `${(CARD_RADIUS * cssWidth / w).toFixed(2)}px`;
+    if (tile !== 'screen' && canvas.style.borderRadius !== radius) canvas.style.borderRadius = radius;
   }
 
   const canvases = [...document.querySelectorAll('canvas[data-tile]')];
-  const paintAll = () => canvases.forEach(paint);
+  const paintAll = () => {
+    const widths = canvases.map((canvas) => canvas.clientWidth);
+    canvases.forEach((canvas, i) => paint(canvas, widths[i]));
+  };
 
   let pending = false;
   function schedulePaint() {
@@ -620,6 +648,21 @@
     requestAnimationFrame(() => {
       pending = false;
       paintAll();
+      refreshChart();
+    });
+  }
+
+  /** On a resize, only the canvases shown at a new width or pixel ratio need drawing again. */
+  let resizePending = false;
+  function scheduleResize() {
+    if (resizePending) return;
+    resizePending = true;
+    requestAnimationFrame(() => {
+      resizePending = false;
+      const widths = canvases.map((canvas) => canvas.clientWidth);
+      canvases.forEach((canvas, i) => {
+        if (paintedAt.get(canvas) !== sizeKey(widths[i])) paint(canvas, widths[i]);
+      });
       refreshChart();
     });
   }
@@ -789,7 +832,7 @@
     document.getElementById('zone-swatch').style.background = ZONE_COLORS[zone - 1];
     refreshChart();
     placeMarker();
-    canvases.filter((c) => c.dataset.source === 'explorer').forEach(paint);
+    canvases.filter((c) => c.dataset.source === 'explorer').forEach((c) => paint(c));
   }
 
   /** Redraws the chart when its unit or the width it is shown at has changed. */
@@ -909,6 +952,7 @@
     }
     labelSize = null;
     pillSizes.clear();
+    measured.clear();
     initSettings();
     const screen = canvases.find((c) => c.dataset.source === 'hero');
     const warm = shouldWarmUp(screen);
@@ -916,8 +960,9 @@
     paintAll();
     if (warm) setTimeout(() => warmUp(screen), 500);
     initExplorer();
-    new ResizeObserver(schedulePaint).observe(document.body);
-    window.addEventListener('resize', schedulePaint);
+    // Its first call, straight after observe(), finds every canvas at the size it was just painted.
+    new ResizeObserver(scheduleResize).observe(document.body);
+    window.addEventListener('resize', scheduleResize);
     showLatestRelease();
   }
 

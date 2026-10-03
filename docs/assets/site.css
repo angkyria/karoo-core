@@ -736,8 +736,10 @@ canvas[data-tile="pill"] {
   border-top: 1px solid var(--rule);
 }
 
-.sliders label {
+/* The reading sits beside its label rather than inside it, so the label names one control. */
+.slider-head {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
   color: var(--ink-2);
