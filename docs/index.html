@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CORE Heat — heat training fields for the Hammerhead Karoo</title>
+  <meta name="description" content="Heat training data fields for the Hammerhead Karoo, driven by a CORE body temperature sensor: core and skin temperature, Heat Strain Index, heat zone, training load and adaptation.">
+  <link rel="canonical" href="https://angkyria.github.io/karoo-core/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CORE Heat">
+  <meta property="og:description" content="Heat training data fields for the Hammerhead Karoo, driven by a CORE body temperature sensor.">
+  <meta property="og:url" content="https://angkyria.github.io/karoo-core/">
+  <meta property="og:image" content="https://angkyria.github.io/karoo-core/assets/social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A CORE Heat HUD field on a Karoo: core 38.6 and skin 35.1 in heat zone 3 orange, with the zone pill between them.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="preload" href="assets/fonts/din-1451-mittelschrift.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#top">
+        <img src="assets/favicon.svg" alt="" width="28" height="28">
+        <span>CORE Heat</span>
+      </a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#fields">Fields</a>
+        <a href="#zones">Zones</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/angkyria/karoo-core" class="nav-gh">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" id="top">
+      <div class="hero-copy">
+        <h1>CORE Heat</h1>
+        <p class="lede">Heat training data fields for the Hammerhead Karoo, driven by a <a href="https://corebodytemp.com">CORE</a> body temperature sensor.</p>
+        <p>Core and skin temperature, the Heat Strain Index read straight from the sensor, CORE’s heat zones, today’s heat training load and your heat adaptation score — drawn large in DIN&nbsp;1451 Mittelschrift, so the number fills the field, and colored in CORE’s own zone colors.</p>
+        <div class="cta">
+          <a class="button primary" href="https://github.com/angkyria/karoo-core/releases/latest/download/core-release.apk">Download core-release.apk</a>
+          <a class="button secondary" href="#install">How to install</a>
+        </div>
+        <p class="release"><span data-release>Always the latest release.</span> Every field needs a CORE sensor paired to the Karoo. Free and open source, under the Apache-2.0 license.</p>
+      </div>
+      <figure class="hero-device">
+        <div class="device">
+          <canvas data-tile="screen" data-source="hero" data-w="480" data-h="800" role="img" aria-label="A Karoo data page of CORE Heat fields" style="aspect-ratio: 480 / 800"></canvas>
+        </div>
+        <figcaption>A 38.6&nbsp;°C core on 35.1&nbsp;°C skin: Heat Strain Index 4.1, heat zone 3.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" id="fields" aria-labelledby="fields-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="fields-title">Nine fields</h2>
+          <p>All fields appear in the Karoo’s field picker under <strong>CORE Heat</strong>. The Karoo passes on the CORE’s core and skin temperature; everything else is worked out by CORE Heat, following CORE’s own definitions.</p>
+        </div>
+
+        <div class="settings" role="group" aria-label="Preview settings">
+          <div class="control">
+            <span class="control-label" id="mode-label">Heat colors</span>
+            <div class="seg" role="radiogroup" aria-labelledby="mode-label">
+              <label><input type="radio" name="mode" value="off" data-setting="mode">Off</label>
+              <label><input type="radio" name="mode" value="text" data-setting="mode" checked>Number</label>
+              <label><input type="radio" name="mode" value="fill" data-setting="mode">Field background</label>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" data-setting="raised" checked>
+            <span class="track" aria-hidden="true"></span>
+            <span>Raised decimals <span class="example">38<sup>6</sup></span></span>
+          </label>
+          <div class="control">
+            <span class="control-label" id="theme-label">Karoo theme</span>
+            <div class="seg" role="radiogroup" aria-labelledby="theme-label">
+              <label><input type="radio" name="night" value="true" data-setting="night" checked>Night</label>
+              <label><input type="radio" name="night" value="false" data-setting="night">Day</label>
+            </div>
+          </div>
+          <div class="control">
+            <span class="control-label" id="unit-label">Units</span>
+            <div class="seg" role="radiogroup" aria-labelledby="unit-label">
+              <label><input type="radio" name="fahrenheit" value="false" data-setting="fahrenheit" checked>°C</label>
+              <label><input type="radio" name="fahrenheit" value="true" data-setting="fahrenheit">°F</label>
+            </div>
+          </div>
+        </div>
+        <p class="settings-note">Heat colors and raised decimals are CORE Heat’s two settings, in its app on the Karoo’s main menu; the theme and units follow the Karoo. Every field on this page is drawn in your browser by a port of the extension’s own renderer, at a Karoo&nbsp;2’s pixel sizes.</p>
+
+        <div class="field-grid">
+          <article class="tile">
+            <canvas data-tile="field" data-field="core" data-w="238" data-h="150" role="img" aria-label="Heat - Core Temp" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Core Temp</h3>
+            <p>Core body temperature, colored by the current heat zone.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="field" data-field="skin" data-w="238" data-h="150" role="img" aria-label="Heat - Skin Temp" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Skin Temp</h3>
+            <p>Skin temperature, colored by the current heat zone.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="field" data-field="hsi" data-w="238" data-h="150" role="img" aria-label="Heat - Strain Index" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Strain Index</h3>
+            <p>The Heat Strain Index, 0–10, read from the sensor itself.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="field" data-field="zone" data-w="238" data-h="150" role="img" aria-label="Heat - Zone" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Zone</h3>
+            <p>CORE’s heat zone, 1–4, cut from the index.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="field" data-field="load" data-w="238" data-h="150" role="img" aria-label="Heat - Training Load" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Training Load</h3>
+            <p>Today’s heat training load, 0–10.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="field" data-field="adaptation" data-w="238" data-h="150" role="img" aria-label="Heat - Adaptation" style="aspect-ratio: 238 / 150"></canvas>
+            <h3>Heat - Adaptation</h3>
+            <p>The Heat Adaptation Score, 0–100&nbsp;%, colored by level.</p>
+          </article>
+        </div>
+
+        <div class="hud-intro" id="hud">
+          <h3>HUD</h3>
+          <p>The three HUD fields are one tile each: core and skin temperature side by side, each centred in its half and colored by the heat zone, with a hairline between them. Across the top, CORE and SKIN sit over their numbers, and between them a pill shows the metric the HUD is named for.</p>
+        </div>
+        <div class="hud-grid">
+          <article class="tile">
+            <canvas data-tile="hud" data-metric="zone" data-w="478" data-h="127" role="img" aria-label="Heat - HUD Zone" style="aspect-ratio: 478 / 127"></canvas>
+            <h4>Heat - HUD Zone</h4>
+            <p>One square per zone, lit up to the current one, beside the Heat Strain Index.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="hud" data-metric="load" data-w="478" data-h="127" role="img" aria-label="Heat - HUD Training Load" style="aspect-ratio: 478 / 127"></canvas>
+            <h4>Heat - HUD Training Load</h4>
+            <p>A square past each of 2, 4, 6 and 8, so the first comes on when the day starts counting toward adaptation.</p>
+          </article>
+          <article class="tile">
+            <canvas data-tile="hud" data-metric="adaptation" data-w="478" data-h="127" role="img" aria-label="Heat - HUD Adaptation" style="aspect-ratio: 478 / 127"></canvas>
+            <h4>Heat - HUD Adaptation</h4>
+            <p>One square per adaptation level, lit up to the current one, beside the score.</p>
+          </article>
+          <article class="tile">
+            <canvas class="half-tile" data-tile="hud" data-metric="zone" data-w="238" data-h="127" role="img" aria-label="Heat - HUD Zone on a half-width tile" style="aspect-ratio: 238 / 127"></canvas>
+            <h4>On a half-width tile</h4>
+            <p>There is no room for the labels beside the pill, so the pill takes the top row alone. CORE is still on the left and SKIN on the right.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="zones" aria-labelledby="zones-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="zones-title">Heat zones</h2>
+          <p>CORE’s four zones on the Heat Strain Index: 1 (0–0.9), 2 (1.0–2.9), 3 (3.0–6.9, the one to train in) and 4 (7.0+). The CORE broadcasts the index, but the Karoo does not pass it on, so CORE Heat connects to the sensor over Bluetooth to read it. Until that connection is up, or without it, the index is estimated from core and skin temperature using the zone chart CORE publishes.</p>
+        </div>
+
+        <div class="zones-layout">
+          <figure class="chart">
+            <figcaption>
+              <h3>The estimate, over core and skin</h3>
+              <p>Drag the point, or use the sliders. On cool skin the core can run well past 38&nbsp;°C before anything registers; on hot skin the whole scale compresses.</p>
+            </figcaption>
+            <ul class="legend" aria-label="Heat zones">
+              <li><i style="background: #37CA94"></i><b>Zone 1</b> HSI 0–0.9, no heat strain</li>
+              <li><i style="background: #FFC655"></i><b>Zone 2</b> 1.0–2.9, moderate</li>
+              <li><i style="background: #FFA06A"></i><b>Zone 3</b> 3.0–6.9, high: train here</li>
+              <li><i style="background: #F35264"></i><b>Zone 4</b> 7.0 and up, extremely high</li>
+            </ul>
+            <div class="chart-wrap">
+              <svg id="zone-chart" viewBox="0 0 640 400" role="img" aria-labelledby="chart-desc">
+                <desc id="chart-desc">CORE’s four heat zones over skin temperature from 28 to 38 °C and core temperature from 36.5 to 40.5 °C. Each zone boundary falls as skin temperature rises. The table view below lists the boundaries.</desc>
+              </svg>
+              <div class="chart-tip" id="chart-tip" hidden></div>
+            </div>
+            <details class="table-view">
+              <summary>Table view</summary>
+              <table>
+                <caption>Core temperature at which the index reaches each zone, by skin temperature (°C)</caption>
+                <thead>
+                  <tr><th scope="col">Skin</th><th scope="col">Zone 2 (HSI 1.0)</th><th scope="col">Zone 3 (HSI 3.0)</th><th scope="col">Zone 4 (HSI 7.0)</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row">28</th><td>38.80</td><td>39.62</td><td>40.00</td></tr>
+                  <tr><th scope="row">29</th><td>38.67</td><td>39.56</td><td>40.00</td></tr>
+                  <tr><th scope="row">30</th><td>38.54</td><td>39.43</td><td>39.99</td></tr>
+                  <tr><th scope="row">31</th><td>38.41</td><td>39.25</td><td>39.95</td></tr>
+                  <tr><th scope="row">32</th><td>38.26</td><td>39.02</td><td>39.90</td></tr>
+                  <tr><th scope="row">33</th><td>38.10</td><td>38.77</td><td>39.82</td></tr>
+                  <tr><th scope="row">34</th><td>37.92</td><td>38.51</td><td>39.72</td></tr>
+                  <tr><th scope="row">35</th><td>37.70</td><td>38.24</td><td>39.58</td></tr>
+                  <tr><th scope="row">36</th><td>37.46</td><td>37.98</td><td>39.41</td></tr>
+                  <tr><th scope="row">37</th><td>37.19</td><td>37.72</td><td>39.21</td></tr>
+                  <tr><th scope="row">38</th><td>36.88</td><td>37.49</td><td>38.98</td></tr>
+                </tbody>
+              </table>
+            </details>
+          </figure>
+
+          <div class="zones-side">
+            <canvas data-tile="hud" data-metric="zone" data-source="explorer" data-w="478" data-h="160" role="img" aria-label="Heat - HUD Zone" style="aspect-ratio: 478 / 160"></canvas>
+            <div class="readout" aria-live="polite">
+              <p class="readout-value"><span class="readout-label">Estimated HSI</span> <span id="hsi-output">4.1</span></p>
+              <p class="readout-zone"><i id="zone-swatch"></i><b id="zone-output">Zone 3</b> <span id="zone-name">high heat strain, the zone to train in</span></p>
+            </div>
+            <div class="sliders">
+              <label for="core-input">Core temperature <output id="core-output" for="core-input">38.6 °C</output></label>
+              <input id="core-input" type="range" min="36.5" max="40.5" step="0.1" value="38.6">
+              <label for="skin-input">Skin temperature <output id="skin-output" for="skin-input">35.1 °C</output></label>
+              <input id="skin-input" type="range" min="28" max="38" step="0.1" value="35.1">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="load" aria-labelledby="load-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="load-title">Training load and adaptation</h2>
+          <p>Today’s heat training load is built up from time spent at an elevated index, and the days’ loads build your heat adaptation score.</p>
+        </div>
+        <div class="two-col">
+          <article class="block">
+            <h3>Heat training load</h3>
+            <p>Today’s total, 0–10, built up from time spent at an elevated HSI. Like CORE, it only counts while a ride is recording with a heart rate coming in.</p>
+            <p>CORE gives the load no colors, so the HUD’s pill takes a violet of its own, deeper with each step. The load’s own field stays uncolored.</p>
+            <ol class="pill-steps">
+              <li><canvas data-tile="pill" data-metric="load" data-value="1.6" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>2.0 or less</b> not counting toward adaptation yet</span></li>
+              <li><canvas data-tile="pill" data-metric="load" data-value="3.2" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Above 2</b> the day counts toward adaptation</span></li>
+              <li><canvas data-tile="pill" data-metric="load" data-value="5.0" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Above 4</b></span></li>
+              <li><canvas data-tile="pill" data-metric="load" data-value="6.1" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Above 6</b></span></li>
+              <li><canvas data-tile="pill" data-metric="load" data-value="8.4" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Above 8</b></span></li>
+            </ol>
+          </article>
+          <article class="block">
+            <h3>Heat adaptation score</h3>
+            <p>0–100&nbsp;%, raised by days with a load above 2 and decaying after two days without one. It is colored by CORE’s four levels.</p>
+            <ol class="pill-steps">
+              <li><canvas data-tile="pill" data-metric="adaptation" data-value="12.4" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Thermal Rookie</b> from 0</span></li>
+              <li><canvas data-tile="pill" data-metric="adaptation" data-value="38.0" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Heat Accustomed</b> from 25</span></li>
+              <li><canvas data-tile="pill" data-metric="adaptation" data-value="72.1" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Heat Adapted</b> from 50</span></li>
+              <li><canvas data-tile="pill" data-metric="adaptation" data-value="94.5" data-w="172" data-h="45" role="img" style="aspect-ratio: 172 / 45"></canvas><span><b>Heat Champion</b> from 90</span></li>
+            </ol>
+          </article>
+        </div>
+        <aside class="aside">
+          <p>CORE does not publish the formulas for the load and the score, so those are models fitted to the tables and worked examples on its help centre; they land within a few tenths of CORE’s own numbers there. The score starts at 0 when CORE Heat is installed and only sees rides recorded on this Karoo, so it will differ from the CORE app’s if you also heat train elsewhere.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="sensor" aria-labelledby="sensor-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="sensor-title">Reading the index from the sensor</h2>
+          <p>Grant Bluetooth permission in the <strong>CORE sensor</strong> card of the CORE Heat app (main menu → CORE Heat). The same card shows whether the index on screen is the sensor’s or the estimate.</p>
+        </div>
+        <ul class="facts">
+          <li>
+            <h3>Firmware 0.8.7 or later</h3>
+            <p>The sensor only sends its index from CORE firmware 0.8.7 on. Update it in the CORE app.</p>
+          </li>
+          <li>
+            <h3>Only your sensor</h3>
+            <p>CORE Heat only uses a sensor once its core and skin temperatures match the Karoo’s own reading, so on a group ride it will not latch onto a riding partner’s CORE.</p>
+          </li>
+          <li>
+            <h3>One connection to spare</h3>
+            <p>A CORE accepts up to three Bluetooth connections. If the Karoo, your phone and a watch already hold them, pair the CORE to the Karoo over ANT+ to leave one free.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="fit" aria-labelledby="fit-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="fit-title">In your FIT file</h2>
+          <p>The Karoo records a CORE’s core and skin temperature in the ride’s FIT file itself. CORE Heat adds the heat data it cannot record, as developer fields. A ride without a CORE gets none of these.</p>
+        </div>
+        <div class="two-col">
+          <article class="block">
+            <h3>Every second</h3>
+            <dl class="fields-list">
+              <dt><code>heat_strain_index</code></dt>
+              <dd>The index when it comes from the sensor — the field name CORE asks recording devices to use.</dd>
+              <dt><code>estimated_heat_strain_index</code></dt>
+              <dd>The index when it is the estimate, so no analysis tool mistakes one for the other.</dd>
+              <dt><code>heat_zone</code></dt>
+              <dd>The heat zone, 1–4.</dd>
+            </dl>
+          </article>
+          <article class="block">
+            <h3>In the ride summary</h3>
+            <dl class="fields-list">
+              <dt><code>heat_training_load</code></dt>
+              <dd>This ride’s share of the day’s load.</dd>
+              <dt><code>heat_adaptation_score</code></dt>
+              <dd>The heat adaptation score.</dd>
+              <dt><code>avg_heat_strain_index</code> <code>max_heat_strain_index</code></dt>
+              <dd>The ride’s average and highest index.</dd>
+              <dt><code>time_in_heat_zone_1</code> to <code>_4</code></dt>
+              <dd>Time in each heat zone, in seconds.</dd>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="install" aria-labelledby="install-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="install-title">Install</h2>
+          <p>CORE Heat is installed from its <a href="https://github.com/angkyria/karoo-core/releases/latest">latest release</a> on GitHub.</p>
+        </div>
+        <div class="two-col">
+          <article class="block steps">
+            <h3>Karoo 3</h3>
+            <p class="via">With the Hammerhead Companion app</p>
+            <ol>
+              <li>Open the <a href="https://github.com/angkyria/karoo-core/releases/latest">latest release</a> in your phone’s browser.</li>
+              <li>Long-press the <code>core-release.apk</code> link and share it with the Hammerhead Companion app.</li>
+              <li>Your Karoo shows an install prompt — press <strong>Install</strong>.</li>
+            </ol>
+          </article>
+          <article class="block steps">
+            <h3>Karoo 2</h3>
+            <p class="via">By manual sideload</p>
+            <ol>
+              <li>Download <a href="https://github.com/angkyria/karoo-core/releases/latest/download/core-release.apk"><code>core-release.apk</code></a> from the latest release.</li>
+              <li>Set up your Karoo for sideloading — DC Rainmaker has a <a href="https://www.dcrainmaker.com/2021/02/how-to-sideload-android-apps-on-your-hammerhead-karoo-1-karoo-2.html">step-by-step guide</a>.</li>
+              <li><code>adb install core-release.apk</code></li>
+            </ol>
+          </article>
+        </div>
+        <div class="path-block">
+          <h3>Adding fields to a ride profile</h3>
+          <ol class="path" aria-label="On the Karoo">
+            <li><span>Settings</span></li>
+            <li><span>Profiles</span></li>
+            <li><span>your profile</span></li>
+            <li><span>Data Pages</span></li>
+            <li><span>pick a page</span></li>
+            <li><span>Add Field</span></li>
+            <li><span>CORE Heat</span></li>
+            <li><span>choose a field</span></li>
+          </ol>
+          <p>To update later, long-tap the CORE Heat icon on the main menu and select <strong>Update</strong>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <p class="footer-brand">CORE Heat</p>
+        <p>Free software under the <a href="https://github.com/angkyria/karoo-core/blob/main/LICENSE">Apache-2.0 license</a>. Built on Hammerhead’s <a href="https://github.com/hammerheadnav/karoo-ext">karoo-ext</a> SDK.</p>
+        <ul class="footer-links">
+          <li><a href="https://github.com/angkyria/karoo-core">Source</a></li>
+          <li><a href="https://github.com/angkyria/karoo-core/releases">Releases</a></li>
+          <li><a href="https://github.com/angkyria/karoo-core/blob/main/CHANGELOG.md">Changelog</a></li>
+          <li><a href="https://github.com/angkyria/karoo-core/issues">Issues</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Credits</h2>
+        <p>The HUD follows the HUD of <a href="https://github.com/smartycoder/karoo-bignum">karoo-bignum</a>, also Apache-2.0: its layout of two whole fields and a zone pill, and the pill’s drawing.</p>
+        <p>Every number and label is set in <a href="https://fontlibrary.org/en/font/u-din-1451-mittelschrift">u_DIN 1451 Mittelschrift</a>, usr_share’s version of Peter Wiegel’s free Alte DIN 1451 Mittelschrift. © 2009-2016 Peter Wiegel, © 2016 usr_share, licensed under the <a href="assets/fonts/OFL.txt">SIL Open Font License 1.1</a>.</p>
+      </div>
+      <div>
+        <h2>Independent</h2>
+        <p>CORE Heat is not made or endorsed by CORE or Hammerhead. Its heat zones, levels and colors follow what CORE publishes on its help centre.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
