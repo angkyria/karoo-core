@@ -8,6 +8,9 @@ field, and colored in CORE's own zone colors.
 
 Built on Hammerhead's [karoo-ext](https://github.com/hammerheadnav/karoo-ext) SDK.
 
+Every field can be seen drawn, with its settings to try, on the
+**[project page](https://angkyria.github.io/karoo-core/)**.
+
 ## Fields
 
 All fields appear in the field picker under **CORE Heat**.
@@ -128,6 +131,20 @@ Tests:
 ```
 ./gradlew :core:testDebugUnitTest
 ```
+
+## Project page
+
+The [project page](https://angkyria.github.io/karoo-core/) is served by GitHub Pages from `docs/`
+on `main`, so every push there publishes it. Its fields are drawn in the browser by
+`docs/assets/site.js`, a port of the extension's renderer and heat model: a change to either in
+`core/` belongs in that file too, or the page shows fields the Karoo no longer draws. To preview
+it:
+
+```
+python3 -m http.server -d docs
+```
+
+and open `http://localhost:8000/`.
 
 ## Release signing
 
